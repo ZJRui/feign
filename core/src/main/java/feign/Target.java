@@ -70,6 +70,9 @@ public interface Target<T> {
     private final String url;
 
     public HardCodedTarget(Class<T> type, String url) {
+      /**
+       * 使用url作为name
+       */
       this(type, url, url);
     }
 

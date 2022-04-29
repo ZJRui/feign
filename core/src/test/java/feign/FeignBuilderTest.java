@@ -269,6 +269,10 @@ public class FeignBuilderTest {
         .hasBody("request data");
   }
 
+  /**
+   * 正常运行测试用例
+   * @throws Exception
+   */
   @Test
   public void testProvideInvocationHandlerFactory() throws Exception {
     server.enqueue(new MockResponse().setBody("response data"));
@@ -295,6 +299,38 @@ public class FeignBuilderTest {
 
     assertThat(server.takeRequest())
         .hasBody("request data");
+  }
+
+  /**
+   * 正常运行测试用例
+   * @throws Exception
+   */
+  @Test
+  public void testProvideInvocationHandlerFactory_zjr() throws Exception {
+    server.enqueue(new MockResponse().setBody("response data"));
+
+    String url = "http://localhost:" + server.getPort();
+
+    final AtomicInteger callCount = new AtomicInteger();
+    // noinspection rawtypes
+    InvocationHandlerFactory factory = new InvocationHandlerFactory() {
+      private final InvocationHandlerFactory delegate = new Default();
+
+      @Override
+      public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
+        callCount.incrementAndGet();
+        return delegate.create(target, dispatch);
+      }
+    };
+
+    TestInterface api =
+            Feign.builder().invocationHandlerFactory(factory).target(TestInterface.class, url);
+    Response response = api.codecPost("request data");
+    assertEquals("response data", Util.toString(response.body().asReader(Util.UTF_8)));
+    assertEquals(1, callCount.get());
+
+    assertThat(server.takeRequest())
+            .hasBody("request data");
   }
 
   @Test

@@ -283,6 +283,41 @@ public abstract class Feign {
       return this;
     }
 
+    /**
+     *
+     *   public static CatClient create(String url) {
+     *         return Feign.builder()
+     *                 .decoder(new GsonDecoder())
+     *                 .encoder(new GsonEncoder())
+     *                 .requestInterceptor(template -> template.header("Role", "BigBoss"))
+     *                 .target(CatClient.class, url);
+     *     }
+     *
+     *
+     * public interface CatClient {
+     *
+     *     @RequestLine("GET /cat")
+     *     List<Cat> findAll();
+     *
+     *     @RequestLine("GET /cat/{id}")
+     *     Cat findById(@Param("id") String id);
+     *
+     *     @RequestLine("POST /cat")
+     *     Cat create(Cat cat);
+     *
+     *     @RequestLine("PUT /cat/{id}")
+     *     Cat update(@Param("id") String id, Cat cat);
+     *
+     *     @RequestLine("DELETE /cat/{id}")
+     *     Cat delete(@Param("id") String id);
+     * }
+     *
+     *
+     * @param apiType
+     * @param url
+     * @param <T>
+     * @return
+     */
     public <T> T target(Class<T> apiType, String url) {
       return target(new HardCodedTarget<T>(apiType, url));
     }
@@ -312,6 +347,18 @@ public abstract class Feign {
       ParseHandlersByName handlersByName =
           new ParseHandlersByName(contract, options, encoder, decoder, queryMapEncoder,
               errorDecoder, synchronousMethodHandlerFactory);
+      /**
+       * build 方法生成的不是Feign类，而是Feign的子类ReflectiveFeign 。
+       *
+       * 对于ReflectiveFeign最终我们会调用它的target方法，生成我们指定接口的代理对象
+       *
+       *    return Feign.builder().decoder(new GsonDecoder())
+       *                 .encoder(new GsonEncoder())
+       *                 .requestInterceptor(requestTemplate -> requestTemplate.header("Role", "BigBoos"))
+       *                 .target(CatClient.class, url);
+       *
+       *
+       */
       return new ReflectiveFeign(handlersByName, invocationHandlerFactory, queryMapEncoder);
     }
   }
