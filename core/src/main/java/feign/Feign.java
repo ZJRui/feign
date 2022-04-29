@@ -96,17 +96,41 @@ public abstract class Feign {
 
   public static class Builder {
 
+    /**
+     * 用过RestTemplate应该都知道在发起请求时，可以在RestTemplate中加入拦截器，实现我们自己的逻辑，例如增加请求头等，在Feign也可以添加拦截器，如下
+     * private final List<RequestInterceptor> requestInterceptors = new ArrayList<RequestInterceptor>();
+     */
     private final List<RequestInterceptor> requestInterceptors =
         new ArrayList<RequestInterceptor>();
     private Logger.Level logLevel = Logger.Level.NONE;
+    /**
+     * 用过feign的都知道，feign通过在接口上标注注解为我们生成代理类以达到调用的目的，那么对于注解有着自己的一套解析方式
+     *
+     *  private Contract contract = new Contract.Default();
+     */
     private Contract contract = new Contract.Default();
+
+    /**
+     * 有了请求的基本信息后，我们需要一个客户端来发送请求，在feign中为Client接口的实例，这意味着我们可以自己扩展Client实现自己的发送端。
+     * 比如 OkHttpClient 和RibbonClient
+     *
+     */
     private Client client = new Client.Default(null, null);
+    /**
+     * 对于网络中的请求总是存在不稳定性，也许一次成功一次失败，这时我们就需要一个重发器来帮助我们重新发起请求，Feign会为我们提供了重试器
+     */
     private Retryer retryer = new Retryer.Default();
     private Logger logger = new NoOpLogger();
+    /**
+     * 如果对netty有过了解的应该都知道编写服务端和客户端时，我们可以对网络传输自定义编码和解码器按照我们想要的方式来传输，feign中也提供了对应的编码和解码，如下
+     */
     private Encoder encoder = new Encoder.Default();
     private Decoder decoder = new Decoder.Default();
     private QueryMapEncoder queryMapEncoder = new FieldQueryMapEncoder();
     private ErrorDecoder errorDecoder = new ErrorDecoder.Default();
+    /**
+     * 在发起http请求时，一些接口的响应时间以及http连接建立时间过长导致资源被占用，这时我们需要一些参数来控制请求超时，这里Feign提供了Options类提供配置
+     */
     private Options options = new Options();
     private InvocationHandlerFactory invocationHandlerFactory =
         new InvocationHandlerFactory.Default();
@@ -344,6 +368,9 @@ public abstract class Feign {
       SynchronousMethodHandler.Factory synchronousMethodHandlerFactory =
           new SynchronousMethodHandler.Factory(client, retryer, requestInterceptors, logger,
               logLevel, dismiss404, closeAfterDecode, propagationPolicy, forceDecoding);
+      /**
+       * 将contract对象传递给了 ParseHandlersByName
+       */
       ParseHandlersByName handlersByName =
           new ParseHandlersByName(contract, options, encoder, decoder, queryMapEncoder,
               errorDecoder, synchronousMethodHandlerFactory);

@@ -51,6 +51,10 @@ public interface Contract {
      */
     @Override
     public List<MethodMetadata> parseAndValidateMetadata(Class<?> targetType) {
+      /**
+       * Contract接口只提供了一个方法，就是根据Class来解析和验证元数据，该方法有公共的BaseContract提供实现
+       *
+       */
       checkState(targetType.getTypeParameters().length == 0, "Parameterized types unsupported: %s",
           targetType.getSimpleName());
       checkState(targetType.getInterfaces().length <= 1, "Only single inheritance supported: %s",

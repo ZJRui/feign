@@ -23,6 +23,9 @@ import feign.Param.Expander;
 public final class MethodMetadata implements Serializable {
 
   private static final long serialVersionUID = 1L;
+  /**
+   * 还需要一个key用来作为方法的名称，就像mybatis为接口生成映射的key一样，类名#方法名
+   */
   private String configKey;
   private transient Type returnType;
   private Integer urlIndex;
@@ -33,6 +36,13 @@ public final class MethodMetadata implements Serializable {
   private transient Type bodyType;
   private final RequestTemplate template = new RequestTemplate();
   private final List<String> formParams = new ArrayList<String>();
+  /**
+   * 在编写feign的接口时还可以指定参数替换等，比如在参数处使用@param注解标注替换的属性
+   * @RequestLine("GET /api/v5/repos/{owner}/{repo}/stargazers?access_token=xxx&page=1&per_page=20")
+   * List<Stargazers> repo(@Param("owner") String owner, @Param("repo") String repo);
+   * 复制代码
+   * 在@RequestLine注解中{}内对应的值会被映射为索引位，从0开始。所以应当还有一个用来存储索引位对应的参数名称的映射关系
+   */
   private final Map<Integer, Collection<String>> indexToName =
       new LinkedHashMap<Integer, Collection<String>>();
   private final Map<Integer, Class<? extends Expander>> indexToExpanderClass =
@@ -42,6 +52,9 @@ public final class MethodMetadata implements Serializable {
   private BitSet parameterToIgnore = new BitSet();
   private boolean ignored;
   private transient Class<?> targetType;
+  /**
+   * 对于这个类名就能得知该类存储的是方法的元数据，那么一定有一个Method字段指向方法，有了方法的引用当然还得有类本身的引用以及返回值类型等等
+   */
   private transient Method method;
   private transient final List<String> warnings = new ArrayList<>();
 

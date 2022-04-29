@@ -27,6 +27,14 @@ import java.lang.reflect.Method;
  * method must be called on the result before invoke is called.
  */
 final class DefaultMethodHandler implements MethodHandler {
+
+  /**
+   *Method Hanldes是在Java 7引入的概念。全限定名是java.lang.invoke.MethodHandles。在这篇文章中，我们将学会如何创建，使用MethodHandles及它的原理。
+   *
+   * https://www.jianshu.com/p/a9cecf8ba5d9
+   *
+   *
+   */
   // Uses Java 7 MethodHandle based reflection. As default methods will only exist when
   // run on a Java 8 JVM this will not affect use on legacy JVMs.
   // When Feign upgrades to Java 7, remove the @IgnoreJRERequirement annotation.

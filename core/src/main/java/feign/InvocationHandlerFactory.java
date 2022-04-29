@@ -37,6 +37,11 @@ public interface InvocationHandlerFactory {
 
     @Override
     public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
+      /**
+       * Feign是使用jdk的代理方式来生成一个代理对象FeignInvocationHandler
+       *
+       * 注意这里返回的是一个InvocationHandler。在这个InvocationHandler中我们执行 目标方法，根据目标方法上的注解，发送http请求
+       */
       return new ReflectiveFeign.FeignInvocationHandler(target, dispatch);
     }
   }

@@ -81,6 +81,12 @@ final class SynchronousMethodHandler implements MethodHandler {
 
   @Override
   public Object invoke(Object[] argv) throws Throwable {
+    /**
+     * SynchronousMethodHandler 的 invoke 方法主要是应用 encoder，decoder 以及 retry 等配置，
+     * 并且自身对于调用结果有一定的处理逻辑。我们最关心的请求实现，实际上是在组装 SynchronousMethodHandler 的 client
+     * 参数上，即前面提到的，如果当前路径里面有 Ribbon，就是 LoadBalancerFeignClient，如果没有，根据配置生成 ApacheHttpClient
+     * 或者 OKHttpClient。在 Ribbon 里面，实现了 Eureka 服务发现以及进行请求等动作。当然 Ribbon 里面还带了负载均衡逻辑。
+     */
     RequestTemplate template = buildTemplateFromArgs.create(argv);
     Options options = findOptions(argv);
     Retryer retryer = this.retryer.clone();
@@ -116,6 +122,7 @@ final class SynchronousMethodHandler implements MethodHandler {
     Response response;
     long start = System.nanoTime();
     try {
+      //通过 client 获得请求的返回值
       response = client.execute(request, options);
       // ensure the request is set. TODO: remove in Feign 12
       response = response.toBuilder()
