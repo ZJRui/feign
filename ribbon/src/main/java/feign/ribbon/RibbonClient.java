@@ -77,6 +77,11 @@ public class RibbonClient implements Client {
       URI uriWithoutHost = cleanUrl(request.url(), clientName);
       LBClient.RibbonRequest ribbonRequest =
           new LBClient.RibbonRequest(delegate, request, uriWithoutHost);
+      /**
+       * lbClient(clientName).executeWithLoadBalancer(ribbonRequest,requestConfig).toResponse() 的第二步
+       *     executeWithLoadBalancer(ribbonRequest, requestConfig).toResponse();
+       *     调用路线：submit()->selectServer()->ServerOption.call() 发送http请求。selectServer使用了ribbon的select过程。
+       */
       return lbClient(clientName).executeWithLoadBalancer(ribbonRequest,
           new FeignOptionsClientConfig(options)).toResponse();
     } catch (ClientException e) {

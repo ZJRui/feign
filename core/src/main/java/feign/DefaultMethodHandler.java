@@ -29,9 +29,17 @@ import java.lang.reflect.Method;
 final class DefaultMethodHandler implements MethodHandler {
 
   /**
+   *
+   * 通过直接调用接口上的默认方法代码来处理默认方法。 绑定到
+   * 方法必须在调用调用之前对结果调用。
    *Method Hanldes是在Java 7引入的概念。全限定名是java.lang.invoke.MethodHandles。在这篇文章中，我们将学会如何创建，使用MethodHandles及它的原理。
    *
    * https://www.jianshu.com/p/a9cecf8ba5d9
+   *
+   *
+   * 如何正确反射调用 interface中的default方法？
+   * Correct Reflective Access to Interface Default Methods in Java 8, 9, 10
+   * https://blog.jooq.org/correct-reflective-access-to-interface-default-methods-in-java-8-9-10/
    *
    *
    */

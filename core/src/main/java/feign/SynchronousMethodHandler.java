@@ -113,6 +113,10 @@ final class SynchronousMethodHandler implements MethodHandler {
   }
 
   Object executeAndDecode(RequestTemplate template, Options options) throws Throwable {
+    /**
+     *   Request request = targetRequest(template); 得到request，其实就是target的feignService信息（service名称，类型等）和请求的springmvc方法，结合出
+     * “GET http://service2/serviceInfo HTTP/1.1”这种请求信息。
+     */
     Request request = targetRequest(template);
 
     if (logLevel != Logger.Level.NONE) {
@@ -122,7 +126,8 @@ final class SynchronousMethodHandler implements MethodHandler {
     Response response;
     long start = System.nanoTime();
     try {
-      //通过 client 获得请求的返回值
+      //通过 client 获得请求的返回值.是LoadBalanceFeignClient,先创建一个RibbonRequest,在拿到ribbon的IClientConfig。
+      //具体查看RibbonClient的execute
       response = client.execute(request, options);
       // ensure the request is set. TODO: remove in Feign 12
       response = response.toBuilder()

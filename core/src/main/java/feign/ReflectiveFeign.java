@@ -189,6 +189,12 @@ public class ReflectiveFeign extends Feign {
         public Map<String, MethodHandler> apply(Target target) {
             /**
              * 解析指定接口 中的所有方法，获取方法上的注解
+             *
+             * Feign 中提供了DefaultContract 来处理接口 中的方法上的@RequestLine 等注解
+             *
+             * Feign整合Spring的时候，提供了SpringContract来处理 接口方法上的 @GetMapping @PostMapping等注解。
+             *
+             *
              */
             List<MethodMetadata> metadata = contract.parseAndValidateMetadata(target.type());
             Map<String, MethodHandler> result = new LinkedHashMap<String, MethodHandler>();
